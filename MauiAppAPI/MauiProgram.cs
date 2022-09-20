@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.Maui;
 using MauiAppAPI.Data;
+using MauiAppAPI.Services;
 
 namespace MauiAppAPI;
 
@@ -21,6 +22,7 @@ public static class MauiProgram
 #endif
 		
 		builder.Services.AddSingleton<WeatherForecastService>();
+		builder.Services.AddScoped<IRestService, RestService>();
 
 		return builder.Build();
 	}

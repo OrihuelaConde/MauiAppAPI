@@ -1,7 +1,41 @@
-﻿@page "/"
+﻿@inject IRestService RestService
+@page "/"
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+@if (RestService.Comments is not null)
+{
+    foreach (CommentDTO comment in RestService.Comments)
+    {
+        <p>@comment.Content - @comment.Date</p>
+    }
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<EditForm Model="@Comment" OnValidSubmit="@SendComment">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value=Comment.Content></InputText>
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private CommentDTO Comment { get; set; } = new CommentDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RestService.RefreshDataAsync();
+    }
+
+    private async void SendComment()
+    {
+        if(!string.IsNullOrWhiteSpace(Comment.Content))
+        {
+            Comment.Date = DateTime.Now;
+            await RestService.SendCommentAsync(Comment);
+            Comment = new CommentDTO();
+            await RestService.RefreshDataAsync();
+            StateHasChanged();
+        }            
+    }
+}
