@@ -9,5 +9,7 @@ namespace BlazorAppAPI.Data
             : base(options)
         {
         }
+
+        public DbSet<Comment> Comments { get; set; }
     }
 }
